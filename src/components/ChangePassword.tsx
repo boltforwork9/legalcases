@@ -7,11 +7,13 @@ export default function ChangePassword() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   const { updatePassword, signOut } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccess(false);
 
     if (newPassword.length < 6) {
       setError('يجب أن تكون كلمة المرور 6 أحرف على الأقل');
@@ -27,10 +29,13 @@ export default function ChangePassword() {
 
     try {
       await updatePassword(newPassword);
-      await signOut();
+      setSuccess(true);
+
+      setTimeout(async () => {
+        await signOut();
+      }, 1500);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'فشل تحديث كلمة المرور');
-    } finally {
       setLoading(false);
     }
   };
@@ -57,6 +62,13 @@ export default function ChangePassword() {
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
             <p className="text-sm text-red-800">{error}</p>
+          </div>
+        )}
+
+        {success && (
+          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-start gap-3">
+            <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-green-800">تم تحديث كلمة المرور بنجاح! جاري تسجيل الخروج...</p>
           </div>
         )}
 

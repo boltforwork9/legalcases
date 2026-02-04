@@ -89,14 +89,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const updatePassword = async (newPassword: string) => {
-    const { error } = await supabase.auth.updateUser({ password: newPassword });
-    if (error) throw error;
+    const { error: authError } = await supabase.auth.updateUser({ password: newPassword });
+    if (authError) throw authError;
 
     if (user) {
-      await supabase
+      const { error: profileError } = await supabase
         .from('profiles')
         .update({ must_change_password: false })
         .eq('id', user.id);
+
+      if (profileError) {
+        console.error('Error updating profile:', profileError);
+        throw new Error('فشل تحديث معلومات الملف الشخصي');
+      }
 
       await refreshProfile();
     }
