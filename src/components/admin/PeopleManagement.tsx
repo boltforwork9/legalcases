@@ -51,7 +51,7 @@ export default function PeopleManagement() {
           .eq('id', editingId);
 
         if (error) throw error;
-        setSuccess('Person updated successfully');
+        setSuccess('تم تحديث الشخص بنجاح');
       } else {
         const { error } = await supabase
           .from('people')
@@ -61,7 +61,7 @@ export default function PeopleManagement() {
           });
 
         if (error) throw error;
-        setSuccess('Person added successfully');
+        setSuccess('تم إضافة الشخص بنجاح');
       }
 
       setFormData({ full_name: '', national_id: '' });
@@ -69,7 +69,7 @@ export default function PeopleManagement() {
       setEditingId(null);
       await loadPeople();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Operation failed');
+      setError(err instanceof Error ? err.message : 'فشلت العملية');
     }
   };
 
@@ -83,7 +83,7 @@ export default function PeopleManagement() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this person? This will also delete all associated cases.')) {
+    if (!confirm('هل أنت متأكد من حذف هذا الشخص؟ سيتم حذف جميع القضايا المرتبطة به أيضاً.')) {
       return;
     }
 
@@ -94,10 +94,10 @@ export default function PeopleManagement() {
         .eq('id', id);
 
       if (error) throw error;
-      setSuccess('Person deleted successfully');
+      setSuccess('تم حذف الشخص بنجاح');
       await loadPeople();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete person');
+      setError(err instanceof Error ? err.message : 'فشل حذف الشخص');
     }
   };
 
@@ -118,13 +118,13 @@ export default function PeopleManagement() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-slate-900">People Management</h2>
+        <h2 className="text-2xl font-bold text-slate-900">إدارة الأشخاص</h2>
         <button
           onClick={() => setShowForm(!showForm)}
           className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition"
         >
+          <span>إضافة شخص</span>
           <UserPlus className="w-4 h-4" />
-          Add Person
         </button>
       </div>
 
@@ -144,13 +144,13 @@ export default function PeopleManagement() {
       {showForm && (
         <div className="mb-6 p-6 bg-slate-50 rounded-lg border border-slate-200">
           <h3 className="text-lg font-semibold text-slate-900 mb-4">
-            {editingId ? 'Edit Person' : 'Add New Person'}
+            {editingId ? 'تعديل الشخص' : 'إضافة شخص جديد'}
           </h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Full Name
+                  الاسم الكامل
                 </label>
                 <input
                   type="text"
@@ -162,7 +162,7 @@ export default function PeopleManagement() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  National ID
+                  الرقم الوطني
                 </label>
                 <input
                   type="text"
@@ -178,14 +178,14 @@ export default function PeopleManagement() {
                 type="submit"
                 className="px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition"
               >
-                {editingId ? 'Update' : 'Add'} Person
+                {editingId ? 'تحديث' : 'إضافة'} الشخص
               </button>
               <button
                 type="button"
                 onClick={handleCancel}
                 className="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition"
               >
-                Cancel
+                إلغاء
               </button>
             </div>
           </form>
@@ -197,17 +197,17 @@ export default function PeopleManagement() {
           <table className="w-full">
             <thead className="bg-slate-50 border-b border-slate-200">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                  Full Name
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider">
+                  الاسم الكامل
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                  National ID
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider">
+                  الرقم الوطني
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                  Created
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider">
+                  تاريخ الإنشاء
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                  Actions
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider">
+                  الإجراءات
                 </th>
               </tr>
             </thead>
@@ -215,34 +215,34 @@ export default function PeopleManagement() {
               {people.map((person) => (
                 <tr key={person.id} className="hover:bg-slate-50">
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 justify-end">
+                      <span className="font-medium text-slate-900">{person.full_name}</span>
                       <div className="w-10 h-10 bg-slate-900 rounded-full flex items-center justify-center text-white">
                         <User className="w-5 h-5" />
                       </div>
-                      <span className="font-medium text-slate-900">{person.full_name}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-slate-700">
+                  <td className="px-6 py-4 text-slate-700 text-right">
                     {person.national_id}
                   </td>
-                  <td className="px-6 py-4 text-sm text-slate-600">
-                    {new Date(person.created_at).toLocaleDateString()}
+                  <td className="px-6 py-4 text-sm text-slate-600 text-right">
+                    {new Date(person.created_at).toLocaleDateString('ar-SA')}
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => handleEdit(person)}
-                        className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded transition"
-                        title="Edit person"
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </button>
+                    <div className="flex items-center gap-2 justify-end">
                       <button
                         onClick={() => handleDelete(person.id)}
                         className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 rounded transition"
-                        title="Delete person"
+                        title="حذف الشخص"
                       >
                         <Trash2 className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleEdit(person)}
+                        className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded transition"
+                        title="تعديل الشخص"
+                      >
+                        <Edit2 className="w-4 h-4" />
                       </button>
                     </div>
                   </td>
@@ -254,7 +254,7 @@ export default function PeopleManagement() {
 
         {people.length === 0 && (
           <div className="p-12 text-center text-slate-600">
-            No people found. Add your first person to get started.
+            لم يتم العثور على أشخاص. أضف أول شخص للبدء.
           </div>
         )}
       </div>

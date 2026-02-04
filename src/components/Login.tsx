@@ -17,7 +17,7 @@ export default function Login() {
     try {
       await signIn(email, password);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to sign in');
+      setError(err instanceof Error ? err.message : 'فشل تسجيل الدخول');
     } finally {
       setLoading(false);
     }
@@ -30,8 +30,8 @@ export default function Login() {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-900 rounded-full mb-4">
             <Lock className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Legal Case System</h1>
-          <p className="text-slate-600">Sign in to access the system</p>
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">نظام القضايا القانونية</h1>
+          <p className="text-slate-600">قم بتسجيل الدخول للوصول إلى النظام</p>
         </div>
 
         {error && (
@@ -44,17 +44,17 @@ export default function Login() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
-              Email Address
+              البريد الإلكتروني
             </label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Mail className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <input
                 id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition"
-                placeholder="Enter your email"
+                className="w-full pr-10 pl-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition"
+                placeholder="أدخل بريدك الإلكتروني"
                 required
               />
             </div>
@@ -62,17 +62,17 @@ export default function Login() {
 
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">
-              Password
+              كلمة المرور
             </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Lock className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <input
                 id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition"
-                placeholder="Enter your password"
+                className="w-full pr-10 pl-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition"
+                placeholder="أدخل كلمة المرور"
                 required
               />
             </div>
@@ -83,12 +83,12 @@ export default function Login() {
             disabled={loading}
             className="w-full bg-slate-900 text-white py-3 rounded-lg font-medium hover:bg-slate-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
           </button>
         </form>
 
         <p className="mt-6 text-center text-sm text-slate-600">
-          For access, contact your system administrator
+          للحصول على صلاحية الدخول، تواصل مع مسؤول النظام
         </p>
       </div>
     </div>

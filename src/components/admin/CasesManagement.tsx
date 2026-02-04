@@ -57,6 +57,15 @@ export default function CasesManagement() {
     }
   };
 
+  const getStatusLabel = (status: string) => {
+    const statusMap: Record<string, string> = {
+      'Open': 'مفتوحة',
+      'Pending': 'قيد الانتظار',
+      'Closed': 'مغلقة'
+    };
+    return statusMap[status] || status;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -76,7 +85,7 @@ export default function CasesManagement() {
           .eq('id', editingId);
 
         if (error) throw error;
-        setSuccess('Case updated successfully');
+        setSuccess('تم تحديث القضية بنجاح');
       } else {
         const { error } = await supabase
           .from('cases')
@@ -89,7 +98,7 @@ export default function CasesManagement() {
           });
 
         if (error) throw error;
-        setSuccess('Case added successfully');
+        setSuccess('تم إضافة القضية بنجاح');
       }
 
       setFormData({
@@ -103,7 +112,7 @@ export default function CasesManagement() {
       setEditingId(null);
       await loadData();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Operation failed');
+      setError(err instanceof Error ? err.message : 'فشلت العملية');
     }
   };
 
@@ -120,7 +129,7 @@ export default function CasesManagement() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this case?')) {
+    if (!confirm('هل أنت متأكد من حذف هذه القضية؟')) {
       return;
     }
 
@@ -131,10 +140,10 @@ export default function CasesManagement() {
         .eq('id', id);
 
       if (error) throw error;
-      setSuccess('Case deleted successfully');
+      setSuccess('تم حذف القضية بنجاح');
       await loadData();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete case');
+      setError(err instanceof Error ? err.message : 'فشل حذف القضية');
     }
   };
 
@@ -161,13 +170,13 @@ export default function CasesManagement() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-slate-900">Cases Management</h2>
+        <h2 className="text-2xl font-bold text-slate-900">إدارة القضايا</h2>
         <button
           onClick={() => setShowForm(!showForm)}
           className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition"
         >
+          <span>إضافة قضية</span>
           <FilePlus className="w-4 h-4" />
-          Add Case
         </button>
       </div>
 
@@ -187,12 +196,12 @@ export default function CasesManagement() {
       {showForm && (
         <div className="mb-6 p-6 bg-slate-50 rounded-lg border border-slate-200">
           <h3 className="text-lg font-semibold text-slate-900 mb-4">
-            {editingId ? 'Edit Case' : 'Add New Case'}
+            {editingId ? 'تعديل القضية' : 'إضافة قضية جديدة'}
           </h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">
-                Person
+                الشخص
               </label>
               <select
                 value={formData.person_id}
@@ -200,7 +209,7 @@ export default function CasesManagement() {
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
                 required
               >
-                <option value="">Select a person</option>
+                <option value="">اختر شخصاً</option>
                 {people.map((person) => (
                   <option key={person.id} value={person.id}>
                     {person.full_name} ({person.national_id})
@@ -212,20 +221,20 @@ export default function CasesManagement() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Case Type
+                  نوع القضية
                 </label>
                 <input
                   type="text"
                   value={formData.case_type}
                   onChange={(e) => setFormData({ ...formData, case_type: e.target.value })}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
-                  placeholder="e.g., Criminal, Civil, Family"
+                  placeholder="مثال: جنائية، مدنية، أسرية"
                   required
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Court Name
+                  اسم المحكمة
                 </label>
                 <input
                   type="text"
@@ -240,7 +249,7 @@ export default function CasesManagement() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Case Number
+                  رقم القضية
                 </label>
                 <input
                   type="text"
@@ -252,7 +261,7 @@ export default function CasesManagement() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Status
+                  الحالة
                 </label>
                 <select
                   value={formData.status}
@@ -260,10 +269,10 @@ export default function CasesManagement() {
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
                   required
                 >
-                  <option value="">Select status</option>
-                  <option value="Open">Open</option>
-                  <option value="Pending">Pending</option>
-                  <option value="Closed">Closed</option>
+                  <option value="">اختر الحالة</option>
+                  <option value="Open">مفتوحة</option>
+                  <option value="Pending">قيد الانتظار</option>
+                  <option value="Closed">مغلقة</option>
                 </select>
               </div>
             </div>
@@ -273,14 +282,14 @@ export default function CasesManagement() {
                 type="submit"
                 className="px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition"
               >
-                {editingId ? 'Update' : 'Add'} Case
+                {editingId ? 'تحديث' : 'إضافة'} القضية
               </button>
               <button
                 type="button"
                 onClick={handleCancel}
                 className="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition"
               >
-                Cancel
+                إلغاء
               </button>
             </div>
           </form>
@@ -292,23 +301,23 @@ export default function CasesManagement() {
           <table className="w-full">
             <thead className="bg-slate-50 border-b border-slate-200">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                  Person
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider">
+                  الشخص
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                  Case Type
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider">
+                  نوع القضية
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                  Case Number
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider">
+                  رقم القضية
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                  Court
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider">
+                  المحكمة
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                  Status
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider">
+                  الحالة
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                  Actions
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider">
+                  الإجراءات
                 </th>
               </tr>
             </thead>
@@ -316,26 +325,26 @@ export default function CasesManagement() {
               {cases.map((caseItem) => (
                 <tr key={caseItem.id} className="hover:bg-slate-50">
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <User className="w-4 h-4 text-slate-600" />
+                    <div className="flex items-center gap-2 justify-end">
                       <span className="text-sm font-medium text-slate-900">
                         {caseItem.person?.full_name}
                       </span>
+                      <User className="w-4 h-4 text-slate-600" />
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <FileText className="w-4 h-4 text-slate-600" />
+                    <div className="flex items-center gap-2 justify-end">
                       <span className="text-sm text-slate-700">{caseItem.case_type}</span>
+                      <FileText className="w-4 h-4 text-slate-600" />
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-slate-700">
+                  <td className="px-6 py-4 text-sm text-slate-700 text-right">
                     {caseItem.case_number}
                   </td>
-                  <td className="px-6 py-4 text-sm text-slate-700">
+                  <td className="px-6 py-4 text-sm text-slate-700 text-right">
                     {caseItem.court_name}
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 text-right">
                     <span
                       className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
                         caseItem.status === 'Open'
@@ -345,24 +354,24 @@ export default function CasesManagement() {
                           : 'bg-amber-100 text-amber-800'
                       }`}
                     >
-                      {caseItem.status}
+                      {getStatusLabel(caseItem.status)}
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => handleEdit(caseItem)}
-                        className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded transition"
-                        title="Edit case"
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </button>
+                    <div className="flex items-center gap-2 justify-end">
                       <button
                         onClick={() => handleDelete(caseItem.id)}
                         className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 rounded transition"
-                        title="Delete case"
+                        title="حذف القضية"
                       >
                         <Trash2 className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleEdit(caseItem)}
+                        className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded transition"
+                        title="تعديل القضية"
+                      >
+                        <Edit2 className="w-4 h-4" />
                       </button>
                     </div>
                   </td>
@@ -374,7 +383,7 @@ export default function CasesManagement() {
 
         {cases.length === 0 && (
           <div className="p-12 text-center text-slate-600">
-            No cases found. Add your first case to get started.
+            لم يتم العثور على قضايا. أضف أول قضية للبدء.
           </div>
         )}
       </div>

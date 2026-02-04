@@ -65,12 +65,12 @@ export default function SearchLogs() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-slate-900">Search Logs</h2>
+        <h2 className="text-2xl font-bold text-slate-900">سجلات البحث</h2>
         <button
           onClick={loadLogs}
           className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition"
         >
-          Refresh
+          تحديث
         </button>
       </div>
 
@@ -79,14 +79,14 @@ export default function SearchLogs() {
           <table className="w-full">
             <thead className="bg-slate-50 border-b border-slate-200">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                  User
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider">
+                  المستخدم
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                  Person Searched
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider">
+                  الشخص المبحوث عنه
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                  Timestamp
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider">
+                  التوقيت
                 </th>
               </tr>
             </thead>
@@ -94,40 +94,40 @@ export default function SearchLogs() {
               {logs.map((log) => (
                 <tr key={log.id} className="hover:bg-slate-50">
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 justify-end">
+                      <div className="text-right">
+                        <div className="text-sm font-medium text-slate-900">
+                          {log.user?.name || 'غير معروف'}
+                        </div>
+                        <div className="text-xs text-slate-600">
+                          {log.user?.email || 'غير متاح'}
+                        </div>
+                      </div>
                       <User className="w-4 h-4 text-slate-600" />
-                      <div>
-                        <div className="text-sm font-medium text-slate-900">
-                          {log.user?.name || 'Unknown'}
-                        </div>
-                        <div className="text-xs text-slate-600">
-                          {log.user?.email || 'N/A'}
-                        </div>
-                      </div>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 justify-end">
+                      <div className="text-right">
+                        <div className="text-sm font-medium text-slate-900">
+                          {log.person?.full_name || 'غير معروف'}
+                        </div>
+                        <div className="text-xs text-slate-600">
+                          {log.person?.national_id || 'غير متاح'}
+                        </div>
+                      </div>
                       <Search className="w-4 h-4 text-slate-600" />
-                      <div>
-                        <div className="text-sm font-medium text-slate-900">
-                          {log.person?.full_name || 'Unknown'}
-                        </div>
-                        <div className="text-xs text-slate-600">
-                          {log.person?.national_id || 'N/A'}
-                        </div>
-                      </div>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-2 text-sm text-slate-700">
-                      <Clock className="w-4 h-4 text-slate-600" />
-                      <div>
-                        <div>{new Date(log.searched_at).toLocaleDateString()}</div>
+                    <div className="flex items-center gap-2 text-sm text-slate-700 justify-end">
+                      <div className="text-right">
+                        <div>{new Date(log.searched_at).toLocaleDateString('ar-SA')}</div>
                         <div className="text-xs text-slate-600">
-                          {new Date(log.searched_at).toLocaleTimeString()}
+                          {new Date(log.searched_at).toLocaleTimeString('ar-SA')}
                         </div>
                       </div>
+                      <Clock className="w-4 h-4 text-slate-600" />
                     </div>
                   </td>
                 </tr>
@@ -138,7 +138,7 @@ export default function SearchLogs() {
 
         {logs.length === 0 && (
           <div className="p-12 text-center text-slate-600">
-            No search logs found.
+            لم يتم العثور على سجلات بحث.
           </div>
         )}
       </div>

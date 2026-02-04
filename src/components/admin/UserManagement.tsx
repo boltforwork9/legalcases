@@ -54,12 +54,12 @@ export default function UserManagement() {
 
       if (signUpError) throw signUpError;
 
-      setSuccess('User created successfully');
+      setSuccess('تم إنشاء المستخدم بنجاح');
       setFormData({ name: '', email: '', password: '', role: 'lawyer' });
       setShowAddForm(false);
       await loadUsers();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create user');
+      setError(err instanceof Error ? err.message : 'فشل إنشاء المستخدم');
     }
   };
 
@@ -79,7 +79,7 @@ export default function UserManagement() {
 
   const handleResetPassword = async (userId: string, email: string) => {
     try {
-      const newPassword = prompt('Enter new password for this user:');
+      const newPassword = prompt('أدخل كلمة المرور الجديدة لهذا المستخدم:');
       if (!newPassword) return;
 
       const { error } = await supabase.auth.admin.updateUserById(userId, {
@@ -93,10 +93,10 @@ export default function UserManagement() {
         .update({ must_change_password: true })
         .eq('id', userId);
 
-      setSuccess('Password reset successfully. User must change password on next login.');
+      setSuccess('تم إعادة تعيين كلمة المرور بنجاح. يجب على المستخدم تغيير كلمة المرور عند تسجيل الدخول القادم.');
       await loadUsers();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to reset password');
+      setError(err instanceof Error ? err.message : 'فشل إعادة تعيين كلمة المرور');
     }
   };
 
@@ -111,13 +111,13 @@ export default function UserManagement() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-slate-900">User Management</h2>
+        <h2 className="text-2xl font-bold text-slate-900">إدارة المستخدمين</h2>
         <button
           onClick={() => setShowAddForm(!showAddForm)}
           className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition"
         >
+          <span>إضافة مستخدم</span>
           <UserPlus className="w-4 h-4" />
-          Add User
         </button>
       </div>
 
@@ -136,12 +136,12 @@ export default function UserManagement() {
 
       {showAddForm && (
         <div className="mb-6 p-6 bg-slate-50 rounded-lg border border-slate-200">
-          <h3 className="text-lg font-semibold text-slate-900 mb-4">Create New User</h3>
+          <h3 className="text-lg font-semibold text-slate-900 mb-4">إنشاء مستخدم جديد</h3>
           <form onSubmit={handleCreateUser} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Full Name
+                  الاسم الكامل
                 </label>
                 <input
                   type="text"
@@ -153,7 +153,7 @@ export default function UserManagement() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Email
+                  البريد الإلكتروني
                 </label>
                 <input
                   type="email"
@@ -167,7 +167,7 @@ export default function UserManagement() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Password
+                  كلمة المرور
                 </label>
                 <input
                   type="password"
@@ -179,15 +179,15 @@ export default function UserManagement() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Role
+                  الدور
                 </label>
                 <select
                   value={formData.role}
                   onChange={(e) => setFormData({ ...formData, role: e.target.value as 'admin' | 'lawyer' })}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
                 >
-                  <option value="lawyer">Lawyer</option>
-                  <option value="admin">Admin</option>
+                  <option value="lawyer">محامي</option>
+                  <option value="admin">مسؤول</option>
                 </select>
               </div>
             </div>
@@ -196,14 +196,14 @@ export default function UserManagement() {
                 type="submit"
                 className="px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition"
               >
-                Create User
+                إنشاء مستخدم
               </button>
               <button
                 type="button"
                 onClick={() => setShowAddForm(false)}
                 className="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition"
               >
-                Cancel
+                إلغاء
               </button>
             </div>
           </form>
@@ -215,20 +215,20 @@ export default function UserManagement() {
           <table className="w-full">
             <thead className="bg-slate-50 border-b border-slate-200">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                  User
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider">
+                  المستخدم
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                  Role
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider">
+                  الدور
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                  Status
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider">
+                  الحالة
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                  Password
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider">
+                  كلمة المرور
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                  Actions
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider">
+                  الإجراءات
                 </th>
               </tr>
             </thead>
@@ -236,26 +236,26 @@ export default function UserManagement() {
               {users.map((user) => (
                 <tr key={user.id} className="hover:bg-slate-50">
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 justify-end">
+                      <div className="text-right">
+                        <div className="font-medium text-slate-900">{user.name}</div>
+                        <div className="text-sm text-slate-600 flex items-center gap-1 justify-end">
+                          {user.email}
+                          <Mail className="w-3 h-3" />
+                        </div>
+                      </div>
                       <div className="w-10 h-10 bg-slate-900 rounded-full flex items-center justify-center text-white text-sm font-semibold">
                         {user.name.charAt(0).toUpperCase()}
-                      </div>
-                      <div>
-                        <div className="font-medium text-slate-900">{user.name}</div>
-                        <div className="text-sm text-slate-600 flex items-center gap-1">
-                          <Mail className="w-3 h-3" />
-                          {user.email}
-                        </div>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="flex items-center gap-2 text-sm text-slate-700">
+                    <span className="flex items-center gap-2 text-sm text-slate-700 justify-end">
+                      {user.role === 'admin' ? 'مسؤول' : 'محامي'}
                       <Shield className="w-4 h-4" />
-                      {user.role}
                     </span>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 text-right">
                     <span
                       className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
                         user.is_active
@@ -265,41 +265,41 @@ export default function UserManagement() {
                     >
                       {user.is_active ? (
                         <>
+                          نشط
                           <UserCheck className="w-3 h-3" />
-                          Active
                         </>
                       ) : (
                         <>
+                          معطل
                           <UserX className="w-3 h-3" />
-                          Disabled
                         </>
                       )}
                     </span>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 text-right">
                     {user.must_change_password && (
-                      <span className="text-xs text-amber-600">Must change</span>
+                      <span className="text-xs text-amber-600">يجب التغيير</span>
                     )}
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 justify-end">
+                      <button
+                        onClick={() => handleResetPassword(user.id, user.email)}
+                        className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded transition"
+                        title="إعادة تعيين كلمة المرور"
+                      >
+                        <RefreshCw className="w-4 h-4" />
+                      </button>
                       <button
                         onClick={() => handleToggleActive(user.id, user.is_active)}
                         className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded transition"
-                        title={user.is_active ? 'Disable user' : 'Enable user'}
+                        title={user.is_active ? 'تعطيل المستخدم' : 'تفعيل المستخدم'}
                       >
                         {user.is_active ? (
                           <UserX className="w-4 h-4" />
                         ) : (
                           <UserCheck className="w-4 h-4" />
                         )}
-                      </button>
-                      <button
-                        onClick={() => handleResetPassword(user.id, user.email)}
-                        className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded transition"
-                        title="Reset password"
-                      >
-                        <RefreshCw className="w-4 h-4" />
                       </button>
                     </div>
                   </td>

@@ -21,10 +21,10 @@ export default function AdminDashboard() {
   };
 
   const tabs = [
-    { id: 'users' as Tab, label: 'Users', icon: UserCog },
-    { id: 'people' as Tab, label: 'People', icon: Users },
-    { id: 'cases' as Tab, label: 'Cases', icon: FileText },
-    { id: 'logs' as Tab, label: 'Search Logs', icon: Search },
+    { id: 'users' as Tab, label: 'المستخدمون', icon: UserCog },
+    { id: 'people' as Tab, label: 'الأشخاص', icon: Users },
+    { id: 'cases' as Tab, label: 'القضايا', icon: FileText },
+    { id: 'logs' as Tab, label: 'سجلات البحث', icon: Search },
   ];
 
   return (
@@ -33,17 +33,17 @@ export default function AdminDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">Admin Dashboard</h1>
+              <h1 className="text-2xl font-bold text-slate-900">لوحة تحكم المسؤول</h1>
               <p className="text-sm text-slate-600 mt-1">
-                Welcome, {profile?.name}
+                مرحباً، {profile?.name}
               </p>
             </div>
             <button
               onClick={handleSignOut}
               className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition"
             >
+              <span>تسجيل الخروج</span>
               <LogOut className="w-4 h-4" />
-              <span>Sign Out</span>
             </button>
           </div>
         </div>
@@ -62,8 +62,8 @@ export default function AdminDashboard() {
                       : 'border-transparent text-slate-600 hover:text-slate-900 hover:border-slate-300'
                   }`}
                 >
-                  <Icon className="w-4 h-4" />
                   {tab.label}
+                  <Icon className="w-4 h-4" />
                 </button>
               );
             })}

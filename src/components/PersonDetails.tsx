@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, User, FileText, Building2, Hash, Activity } from 'lucide-react';
+import { ArrowRight, User, FileText, Building2, Hash, Activity } from 'lucide-react';
 import { supabase, PersonWithCases } from '../lib/supabase';
 
 interface PersonDetailsProps {
@@ -29,7 +29,7 @@ export default function PersonDetails({ personId, onBack }: PersonDetailsProps) 
 
       if (personError) throw personError;
       if (!personData) {
-        setError('Person not found');
+        setError('لم يتم العثور على الشخص');
         return;
       }
 
@@ -46,10 +46,19 @@ export default function PersonDetails({ personId, onBack }: PersonDetailsProps) 
         cases: casesData || [],
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load details');
+      setError(err instanceof Error ? err.message : 'فشل تحميل التفاصيل');
     } finally {
       setLoading(false);
     }
+  };
+
+  const getStatusLabel = (status: string) => {
+    const statusMap: Record<string, string> = {
+      'Open': 'مفتوحة',
+      'Pending': 'قيد الانتظار',
+      'Closed': 'مغلقة'
+    };
+    return statusMap[status] || status;
   };
 
   if (loading) {
@@ -57,7 +66,7 @@ export default function PersonDetails({ personId, onBack }: PersonDetailsProps) 
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-slate-900 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-600">Loading details...</p>
+          <p className="text-slate-600">جاري التحميل...</p>
         </div>
       </div>
     );
@@ -67,12 +76,12 @@ export default function PersonDetails({ personId, onBack }: PersonDetailsProps) 
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-600 mb-4">{error || 'Person not found'}</p>
+          <p className="text-red-600 mb-4">{error || 'لم يتم العثور على الشخص'}</p>
           <button
             onClick={onBack}
             className="px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition"
           >
-            Go Back
+            العودة
           </button>
         </div>
       </div>
@@ -87,57 +96,48 @@ export default function PersonDetails({ personId, onBack }: PersonDetailsProps) 
             onClick={onBack}
             className="flex items-center gap-2 text-slate-700 hover:text-slate-900 mb-4"
           >
-            <ArrowLeft className="w-5 h-5" />
-            <span>Back to Search</span>
+            <span>العودة إلى البحث</span>
+            <ArrowRight className="w-5 h-5" />
           </button>
-          <h1 className="text-2xl font-bold text-slate-900">Person Details</h1>
+          <h1 className="text-2xl font-bold text-slate-900">تفاصيل الشخص</h1>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-6">
           <div className="flex items-start gap-6">
-            <div className="w-20 h-20 bg-slate-900 rounded-full flex items-center justify-center text-white flex-shrink-0">
-              <User className="w-10 h-10" />
-            </div>
             <div className="flex-1">
               <h2 className="text-2xl font-bold text-slate-900 mb-2">{person.full_name}</h2>
               <div className="flex items-center gap-2 text-slate-600">
+                <span>الرقم الوطني: {person.national_id}</span>
                 <Hash className="w-4 h-4" />
-                <span>National ID: {person.national_id}</span>
               </div>
               <div className="mt-4 flex items-center gap-2 text-slate-600">
+                <span>إجمالي القضايا: {person.cases.length}</span>
                 <FileText className="w-4 h-4" />
-                <span>{person.cases.length} total cases</span>
               </div>
+            </div>
+            <div className="w-20 h-20 bg-slate-900 rounded-full flex items-center justify-center text-white flex-shrink-0">
+              <User className="w-10 h-10" />
             </div>
           </div>
         </div>
 
         <div className="bg-white rounded-lg shadow-sm border border-slate-200">
           <div className="px-6 py-4 border-b border-slate-200">
-            <h3 className="text-lg font-semibold text-slate-900">Cases</h3>
+            <h3 className="text-lg font-semibold text-slate-900">القضايا</h3>
           </div>
 
           {person.cases.length === 0 ? (
             <div className="p-12 text-center">
               <FileText className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-              <p className="text-slate-600">No cases found for this person</p>
+              <p className="text-slate-600">لا توجد قضايا لهذا الشخص</p>
             </div>
           ) : (
             <div className="divide-y divide-slate-200">
               {person.cases.map((caseItem) => (
                 <div key={caseItem.id} className="p-6 hover:bg-slate-50 transition">
                   <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <h4 className="font-semibold text-slate-900 text-lg mb-1">
-                        {caseItem.case_type}
-                      </h4>
-                      <div className="flex items-center gap-2 text-sm text-slate-600">
-                        <Hash className="w-4 h-4" />
-                        <span>Case #: {caseItem.case_number}</span>
-                      </div>
-                    </div>
                     <span
                       className={`px-3 py-1 rounded-full text-sm font-medium ${
                         caseItem.status.toLowerCase() === 'open'
@@ -149,20 +149,29 @@ export default function PersonDetails({ personId, onBack }: PersonDetailsProps) 
                           : 'bg-slate-100 text-slate-800'
                       }`}
                     >
-                      {caseItem.status}
+                      {getStatusLabel(caseItem.status)}
                     </span>
+                    <div className="text-right">
+                      <h4 className="font-semibold text-slate-900 text-lg mb-1">
+                        {caseItem.case_type}
+                      </h4>
+                      <div className="flex items-center gap-2 text-sm text-slate-600">
+                        <span>رقم القضية: {caseItem.case_number}</span>
+                        <Hash className="w-4 h-4" />
+                      </div>
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="flex items-center gap-2 text-sm text-slate-600">
-                      <Building2 className="w-4 h-4" />
-                      <span>{caseItem.court_name}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-slate-600">
-                      <Activity className="w-4 h-4" />
+                    <div className="flex items-center gap-2 text-sm text-slate-600 justify-end">
                       <span>
-                        Created: {new Date(caseItem.created_at).toLocaleDateString()}
+                        تاريخ الإنشاء: {new Date(caseItem.created_at).toLocaleDateString('ar-SA')}
                       </span>
+                      <Activity className="w-4 h-4" />
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-slate-600 justify-end">
+                      <span>{caseItem.court_name}</span>
+                      <Building2 className="w-4 h-4" />
                     </div>
                   </div>
                 </div>
