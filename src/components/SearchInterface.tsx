@@ -78,7 +78,6 @@ export default function SearchInterface({ onPersonSelect }: SearchInterfaceProps
       await signOut();
     } catch (err) {
       console.error('Error signing out:', err);
-      alert('فشل تسجيل الخروج. يرجى المحاولة مرة أخرى.');
       setSigningOut(false);
     }
   };

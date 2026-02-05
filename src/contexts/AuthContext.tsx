@@ -82,10 +82,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
-    setUser(null);
-    setProfile(null);
+    try {
+      setUser(null);
+      setProfile(null);
+      await supabase.auth.signOut();
+    } catch (error) {
+      console.error('Error during sign out:', error);
+      setUser(null);
+      setProfile(null);
+      throw error;
+    }
   };
 
   const updatePassword = async (newPassword: string) => {

@@ -21,7 +21,6 @@ export default function AdminDashboard() {
       await signOut();
     } catch (err) {
       console.error('Error signing out:', err);
-      alert('فشل تسجيل الخروج. يرجى المحاولة مرة أخرى.');
       setSigningOut(false);
     }
   };
