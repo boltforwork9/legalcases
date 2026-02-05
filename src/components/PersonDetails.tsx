@@ -86,33 +86,33 @@ export default function PersonDetails({ personId, onBack }: PersonDetailsProps) 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <button
             onClick={onBack}
-            className="flex items-center gap-2 text-slate-700 hover:text-slate-900 mb-4"
+            className="flex items-center justify-center gap-2 text-slate-700 hover:text-slate-900 mb-4 text-sm sm:text-base"
           >
             <span>العودة إلى البحث</span>
             <ArrowRight className="w-5 h-5" />
           </button>
-          <h1 className="text-2xl font-bold text-slate-900">تفاصيل الشخص</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900">تفاصيل الشخص</h1>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-6">
-          <div className="flex items-start gap-6">
-            <div className="flex-1">
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">{person.full_name}</h2>
+        <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-4 sm:p-6 mb-6">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-slate-900 rounded-full flex items-center justify-center text-white flex-shrink-0 order-first sm:order-last">
+              <User className="w-8 h-8 sm:w-10 sm:h-10" />
+            </div>
+            <div className="flex-1 text-center sm:text-right">
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">{person.full_name}</h2>
               {person.national_id && (
-                <div className="flex items-center gap-2 text-slate-600">
+                <div className="flex items-center justify-center sm:justify-end gap-2 text-slate-600 text-sm sm:text-base">
                   <span>الرقم الوطني: {person.national_id}</span>
                   <Hash className="w-4 h-4" />
                 </div>
               )}
-              <div className="mt-4 flex items-center gap-2 text-slate-600">
+              <div className="mt-4 flex items-center justify-center sm:justify-end gap-2 text-slate-600 text-sm sm:text-base">
                 <span>إجمالي القضايا: {person.cases.length}</span>
                 <FileText className="w-4 h-4" />
               </div>
-            </div>
-            <div className="w-20 h-20 bg-slate-900 rounded-full flex items-center justify-center text-white flex-shrink-0">
-              <User className="w-10 h-10" />
             </div>
           </div>
         </div>
@@ -130,29 +130,35 @@ export default function PersonDetails({ personId, onBack }: PersonDetailsProps) 
           ) : (
             <div className="divide-y divide-slate-200">
               {person.cases.map((caseItem) => (
-                <div key={caseItem.id} className="p-6 hover:bg-slate-50 transition">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="text-left">
+                <div key={caseItem.id} className="p-4 sm:p-6 hover:bg-slate-50 transition">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+                    <div className="text-center sm:text-left order-2 sm:order-1">
                       {caseItem.session_date && (
-                        <div className="flex items-center gap-2 text-sm text-slate-600 mb-2">
+                        <div className="flex items-center justify-center sm:justify-start gap-2 text-sm text-slate-600 mb-2">
                           <Calendar className="w-4 h-4" />
                           <span>{new Date(caseItem.session_date).toLocaleDateString('ar-SA')}</span>
                         </div>
                       )}
                     </div>
-                    <div className="text-right">
-                      <h4 className="font-semibold text-slate-900 text-lg mb-1">
+                    <div className="text-center sm:text-right order-1 sm:order-2">
+                      <h4 className="font-semibold text-slate-900 text-base sm:text-lg mb-1">
                         {caseItem.case_type}
                       </h4>
-                      <div className="flex items-center gap-2 text-sm text-slate-600">
+                      <div className="flex items-center justify-center sm:justify-end gap-2 text-sm text-slate-600">
                         <span>رقم القضية: {caseItem.case_number}</span>
                         <Hash className="w-4 h-4" />
                       </div>
+                      {caseItem.case_year && (
+                        <div className="flex items-center justify-center sm:justify-end gap-2 text-sm text-slate-600 mt-1">
+                          <span>السنة: {caseItem.case_year}</span>
+                          <Calendar className="w-4 h-4" />
+                        </div>
+                      )}
                     </div>
                   </div>
 
                   <div className="mb-3">
-                    <div className="flex items-center gap-2 text-sm text-slate-600 justify-end">
+                    <div className="flex items-center justify-center sm:justify-end gap-2 text-sm text-slate-600">
                       <span>{caseItem.court_name}</span>
                       <Building2 className="w-4 h-4" />
                     </div>
@@ -160,8 +166,8 @@ export default function PersonDetails({ personId, onBack }: PersonDetailsProps) 
 
                   {caseItem.decision && (
                     <div className="mt-3 p-3 bg-slate-50 rounded-lg">
-                      <div className="flex items-start gap-2 justify-end">
-                        <div className="text-sm text-slate-700 text-right">{caseItem.decision}</div>
+                      <div className="flex items-start gap-2 justify-center sm:justify-end">
+                        <div className="text-sm text-slate-700 text-center sm:text-right">{caseItem.decision}</div>
                         <FileCheck className="w-4 h-4 text-slate-600 flex-shrink-0 mt-0.5" />
                       </div>
                     </div>

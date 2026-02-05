@@ -12,6 +12,7 @@ export default function SearchInterface({ onPersonSelect }: SearchInterfaceProps
   const [results, setResults] = useState<PersonWithCaseCount[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [signingOut, setSigningOut] = useState(false);
   const { profile, signOut } = useAuth();
 
   const handleSearch = async (e: React.FormEvent) => {
@@ -70,10 +71,15 @@ export default function SearchInterface({ onPersonSelect }: SearchInterfaceProps
   };
 
   const handleSignOut = async () => {
+    if (signingOut) return;
+
+    setSigningOut(true);
     try {
       await signOut();
     } catch (err) {
       console.error('Error signing out:', err);
+      alert('فشل تسجيل الخروج. يرجى المحاولة مرة أخرى.');
+      setSigningOut(false);
     }
   };
 
@@ -81,18 +87,19 @@ export default function SearchInterface({ onPersonSelect }: SearchInterfaceProps
     <div className="min-h-screen bg-slate-50">
       <header className="bg-white shadow-sm border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-slate-900">البحث في القضايا القانونية</h1>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="text-center sm:text-right">
+              <h1 className="text-lg sm:text-2xl font-bold text-slate-900">البحث في القضايا القانونية</h1>
               <p className="text-sm text-slate-600 mt-1">
                 مرحباً، {profile?.name} ({profile?.role === 'admin' ? 'مسؤول' : 'محامي'})
               </p>
             </div>
             <button
               onClick={handleSignOut}
-              className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition"
+              disabled={signingOut}
+              className="flex items-center justify-center gap-2 px-4 py-2 text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <span>تسجيل الخروج</span>
+              <span className="text-sm sm:text-base">{signingOut ? 'جاري تسجيل الخروج...' : 'تسجيل الخروج'}</span>
               <LogOut className="w-4 h-4" />
             </button>
           </div>
@@ -105,7 +112,7 @@ export default function SearchInterface({ onPersonSelect }: SearchInterfaceProps
             <label htmlFor="search" className="block text-sm font-medium text-slate-700 mb-2">
               البحث بالاسم
             </label>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
                 <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input
@@ -120,7 +127,7 @@ export default function SearchInterface({ onPersonSelect }: SearchInterfaceProps
               <button
                 type="submit"
                 disabled={loading}
-                className="px-6 py-3 bg-slate-900 text-white rounded-lg font-medium hover:bg-slate-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full sm:w-auto px-6 py-3 bg-slate-900 text-white rounded-lg font-medium hover:bg-slate-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'جاري البحث...' : 'بحث'}
               </button>

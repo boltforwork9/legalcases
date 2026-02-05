@@ -33,6 +33,7 @@ export interface Case {
   case_type: string;
   court_name: string;
   case_number: string;
+  case_year: number | null;
   session_date: string | null;
   decision: string;
   created_at: string;

@@ -19,6 +19,7 @@ export default function CasesManagement() {
     case_type: '',
     court_name: '',
     case_number: '',
+    case_year: '',
     session_date: '',
     decision: '',
   });
@@ -81,6 +82,7 @@ export default function CasesManagement() {
             case_type: formData.case_type,
             court_name: formData.court_name,
             case_number: formData.case_number,
+            case_year: formData.case_year ? parseInt(formData.case_year) : null,
             session_date: formData.session_date || null,
             decision: formData.decision,
           })
@@ -96,6 +98,7 @@ export default function CasesManagement() {
             case_type: formData.case_type,
             court_name: formData.court_name,
             case_number: formData.case_number,
+            case_year: formData.case_year ? parseInt(formData.case_year) : null,
             session_date: formData.session_date || null,
             decision: formData.decision,
           });
@@ -109,6 +112,7 @@ export default function CasesManagement() {
         case_type: '',
         court_name: '',
         case_number: '',
+        case_year: '',
         session_date: '',
         decision: '',
       });
@@ -127,6 +131,7 @@ export default function CasesManagement() {
       case_type: caseItem.case_type,
       court_name: caseItem.court_name,
       case_number: caseItem.case_number,
+      case_year: caseItem.case_year ? caseItem.case_year.toString() : '',
       session_date: caseItem.session_date || '',
       decision: caseItem.decision || '',
     });
@@ -161,6 +166,7 @@ export default function CasesManagement() {
       case_type: '',
       court_name: '',
       case_number: '',
+      case_year: '',
       session_date: '',
       decision: '',
     });
@@ -183,11 +189,11 @@ export default function CasesManagement() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-slate-900">إدارة القضايا</h2>
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-slate-900 text-center sm:text-right">إدارة القضايا</h2>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition"
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition text-sm sm:text-base"
         >
           <span>إضافة قضية</span>
           <FilePlus className="w-4 h-4" />
@@ -282,7 +288,7 @@ export default function CasesManagement() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                   نوع القضية
@@ -310,7 +316,7 @@ export default function CasesManagement() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                   رقم القضية
@@ -323,6 +329,23 @@ export default function CasesManagement() {
                   required
                 />
               </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  سنة القضية (اختياري)
+                </label>
+                <input
+                  type="number"
+                  value={formData.case_year}
+                  onChange={(e) => setFormData({ ...formData, case_year: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
+                  placeholder="مثال: 2024"
+                  min="1900"
+                  max="2100"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                   تاريخ الجلسة (اختياري)
@@ -349,17 +372,17 @@ export default function CasesManagement() {
               />
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <button
                 type="submit"
-                className="px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition"
+                className="w-full sm:w-auto px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition text-sm sm:text-base"
               >
                 {editingId ? 'تحديث' : 'إضافة'} القضية
               </button>
               <button
                 type="button"
                 onClick={handleCancel}
-                className="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition"
+                className="w-full sm:w-auto px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition text-sm sm:text-base"
               >
                 إلغاء
               </button>
@@ -368,27 +391,30 @@ export default function CasesManagement() {
         </div>
       )}
 
-      <div className="bg-white rounded-lg shadow-sm border border-slate-200">
+      <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full min-w-max">
             <thead className="bg-slate-50 border-b border-slate-200">
               <tr>
-                <th className="px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider whitespace-nowrap">
                   الشخص
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider whitespace-nowrap">
                   نوع القضية
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider whitespace-nowrap">
                   رقم القضية
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider whitespace-nowrap">
+                  السنة
+                </th>
+                <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider whitespace-nowrap">
                   المحكمة
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider whitespace-nowrap">
                   تاريخ الجلسة
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider whitespace-nowrap">
                   الإجراءات
                 </th>
               </tr>
@@ -396,53 +422,56 @@ export default function CasesManagement() {
             <tbody className="divide-y divide-slate-200">
               {cases.map((caseItem) => (
                 <tr key={caseItem.id} className="hover:bg-slate-50">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2 justify-end">
-                      <span className="text-sm font-medium text-slate-900">
+                  <td className="px-3 sm:px-6 py-3 sm:py-4">
+                    <div className="flex items-center gap-2 justify-end whitespace-nowrap">
+                      <span className="text-xs sm:text-sm font-medium text-slate-900">
                         {caseItem.person?.full_name}
                       </span>
-                      <User className="w-4 h-4 text-slate-600" />
+                      <User className="w-3 h-3 sm:w-4 sm:h-4 text-slate-600 flex-shrink-0" />
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2 justify-end">
-                      <span className="text-sm text-slate-700">{caseItem.case_type}</span>
-                      <FileText className="w-4 h-4 text-slate-600" />
+                  <td className="px-3 sm:px-6 py-3 sm:py-4">
+                    <div className="flex items-center gap-2 justify-end whitespace-nowrap">
+                      <span className="text-xs sm:text-sm text-slate-700">{caseItem.case_type}</span>
+                      <FileText className="w-3 h-3 sm:w-4 sm:h-4 text-slate-600 flex-shrink-0" />
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-slate-700 text-right">
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-slate-700 text-right whitespace-nowrap">
                     {caseItem.case_number}
                   </td>
-                  <td className="px-6 py-4 text-sm text-slate-700 text-right">
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-slate-700 text-right whitespace-nowrap">
+                    {caseItem.case_year || '-'}
+                  </td>
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-slate-700 text-right whitespace-nowrap">
                     {caseItem.court_name}
                   </td>
-                  <td className="px-6 py-4 text-right">
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 text-right">
                     {caseItem.session_date ? (
-                      <div className="flex items-center gap-2 justify-end">
-                        <span className="text-sm text-slate-700">
+                      <div className="flex items-center gap-2 justify-end whitespace-nowrap">
+                        <span className="text-xs sm:text-sm text-slate-700">
                           {new Date(caseItem.session_date).toLocaleDateString('ar-SA')}
                         </span>
-                        <Calendar className="w-4 h-4 text-slate-600" />
+                        <Calendar className="w-3 h-3 sm:w-4 sm:h-4 text-slate-600 flex-shrink-0" />
                       </div>
                     ) : (
-                      <span className="text-sm text-slate-400">-</span>
+                      <span className="text-xs sm:text-sm text-slate-400">-</span>
                     )}
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2 justify-end">
+                  <td className="px-3 sm:px-6 py-3 sm:py-4">
+                    <div className="flex items-center gap-1 sm:gap-2 justify-end whitespace-nowrap">
                       <button
                         onClick={() => handleDelete(caseItem.id)}
-                        className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 rounded transition"
+                        className="p-1.5 sm:p-2 text-red-600 hover:text-red-900 hover:bg-red-50 rounded transition"
                         title="حذف القضية"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
                       <button
                         onClick={() => handleEdit(caseItem)}
-                        className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded transition"
+                        className="p-1.5 sm:p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded transition"
                         title="تعديل القضية"
                       >
-                        <Edit2 className="w-4 h-4" />
+                        <Edit2 className="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
                     </div>
                   </td>
