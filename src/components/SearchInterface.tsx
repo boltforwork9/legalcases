@@ -158,7 +158,9 @@ export default function SearchInterface({ onPersonSelect }: SearchInterfaceProps
                         <h3 className="font-semibold text-slate-900 group-hover:text-slate-700 transition">
                           {person.full_name}
                         </h3>
-                        <p className="text-sm text-slate-600">الرقم الوطني: {person.national_id}</p>
+                        {person.national_id && (
+                          <p className="text-sm text-slate-600">الرقم الوطني: {person.national_id}</p>
+                        )}
                       </div>
                       <div className="w-12 h-12 bg-slate-900 rounded-full flex items-center justify-center text-white font-semibold group-hover:bg-slate-800 transition">
                         <User className="w-6 h-6" />

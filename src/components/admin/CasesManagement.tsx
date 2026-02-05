@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FilePlus, Edit2, Trash2, AlertCircle, FileText, User } from 'lucide-react';
+import { FilePlus, Edit2, Trash2, AlertCircle, FileText, User, Search, Calendar, FileCheck } from 'lucide-react';
 import { supabase, Case, Person } from '../../lib/supabase';
 
 interface CaseWithPerson extends Case {
@@ -12,12 +12,15 @@ export default function CasesManagement() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [personSearch, setPersonSearch] = useState('');
+  const [showPersonDropdown, setShowPersonDropdown] = useState(false);
   const [formData, setFormData] = useState({
     person_id: '',
     case_type: '',
     court_name: '',
     case_number: '',
-    status: '',
+    session_date: '',
+    decision: '',
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -57,14 +60,12 @@ export default function CasesManagement() {
     }
   };
 
-  const getStatusLabel = (status: string) => {
-    const statusMap: Record<string, string> = {
-      'Open': 'مفتوحة',
-      'Pending': 'قيد الانتظار',
-      'Closed': 'مغلقة'
-    };
-    return statusMap[status] || status;
-  };
+  const filteredPeople = people.filter(person =>
+    person.full_name.toLowerCase().includes(personSearch.toLowerCase()) ||
+    (person.national_id && person.national_id.includes(personSearch))
+  );
+
+  const selectedPerson = people.find(p => p.id === formData.person_id);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,7 +81,8 @@ export default function CasesManagement() {
             case_type: formData.case_type,
             court_name: formData.court_name,
             case_number: formData.case_number,
-            status: formData.status,
+            session_date: formData.session_date || null,
+            decision: formData.decision,
           })
           .eq('id', editingId);
 
@@ -94,7 +96,8 @@ export default function CasesManagement() {
             case_type: formData.case_type,
             court_name: formData.court_name,
             case_number: formData.case_number,
-            status: formData.status,
+            session_date: formData.session_date || null,
+            decision: formData.decision,
           });
 
         if (error) throw error;
@@ -106,8 +109,10 @@ export default function CasesManagement() {
         case_type: '',
         court_name: '',
         case_number: '',
-        status: '',
+        session_date: '',
+        decision: '',
       });
+      setPersonSearch('');
       setShowForm(false);
       setEditingId(null);
       await loadData();
@@ -122,7 +127,8 @@ export default function CasesManagement() {
       case_type: caseItem.case_type,
       court_name: caseItem.court_name,
       case_number: caseItem.case_number,
-      status: caseItem.status,
+      session_date: caseItem.session_date || '',
+      decision: caseItem.decision || '',
     });
     setEditingId(caseItem.id);
     setShowForm(true);
@@ -155,8 +161,16 @@ export default function CasesManagement() {
       case_type: '',
       court_name: '',
       case_number: '',
-      status: '',
+      session_date: '',
+      decision: '',
     });
+    setPersonSearch('');
+  };
+
+  const handleSelectPerson = (personId: string) => {
+    setFormData({ ...formData, person_id: personId });
+    setShowPersonDropdown(false);
+    setPersonSearch('');
   };
 
   if (loading) {
@@ -203,19 +217,69 @@ export default function CasesManagement() {
               <label className="block text-sm font-medium text-slate-700 mb-2">
                 الشخص
               </label>
-              <select
-                value={formData.person_id}
-                onChange={(e) => setFormData({ ...formData, person_id: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
-                required
-              >
-                <option value="">اختر شخصاً</option>
-                {people.map((person) => (
-                  <option key={person.id} value={person.id}>
-                    {person.full_name} ({person.national_id})
-                  </option>
-                ))}
-              </select>
+              <div className="relative">
+                {selectedPerson ? (
+                  <div className="flex items-center justify-between px-3 py-2 border border-slate-300 rounded-lg bg-white">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFormData({ ...formData, person_id: '' });
+                        setShowPersonDropdown(true);
+                      }}
+                      className="text-sm text-slate-600 hover:text-slate-900"
+                    >
+                      تغيير
+                    </button>
+                    <div className="text-right">
+                      <div className="font-medium text-slate-900">{selectedPerson.full_name}</div>
+                      {selectedPerson.national_id && (
+                        <div className="text-xs text-slate-600">{selectedPerson.national_id}</div>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="relative">
+                      <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                      <input
+                        type="text"
+                        value={personSearch}
+                        onChange={(e) => {
+                          setPersonSearch(e.target.value);
+                          setShowPersonDropdown(true);
+                        }}
+                        onFocus={() => setShowPersonDropdown(true)}
+                        className="w-full pr-10 pl-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
+                        placeholder="ابحث عن شخص بالاسم أو الرقم الوطني..."
+                        required={!formData.person_id}
+                      />
+                    </div>
+                    {showPersonDropdown && (
+                      <div className="absolute z-10 w-full mt-1 bg-white border border-slate-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                        {filteredPeople.length === 0 ? (
+                          <div className="p-4 text-center text-slate-600 text-sm">
+                            لم يتم العثور على نتائج
+                          </div>
+                        ) : (
+                          filteredPeople.map((person) => (
+                            <button
+                              key={person.id}
+                              type="button"
+                              onClick={() => handleSelectPerson(person.id)}
+                              className="w-full px-4 py-3 text-right hover:bg-slate-50 transition border-b border-slate-100 last:border-b-0"
+                            >
+                              <div className="font-medium text-slate-900">{person.full_name}</div>
+                              {person.national_id && (
+                                <div className="text-xs text-slate-600 mt-1">{person.national_id}</div>
+                              )}
+                            </button>
+                          ))
+                        )}
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -261,20 +325,28 @@ export default function CasesManagement() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  الحالة
+                  تاريخ الجلسة (اختياري)
                 </label>
-                <select
-                  value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                <input
+                  type="date"
+                  value={formData.session_date}
+                  onChange={(e) => setFormData({ ...formData, session_date: e.target.value })}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
-                  required
-                >
-                  <option value="">اختر الحالة</option>
-                  <option value="Open">مفتوحة</option>
-                  <option value="Pending">قيد الانتظار</option>
-                  <option value="Closed">مغلقة</option>
-                </select>
+                />
               </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                القرار
+              </label>
+              <textarea
+                value={formData.decision}
+                onChange={(e) => setFormData({ ...formData, decision: e.target.value })}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
+                rows={3}
+                placeholder="تفاصيل القرار أو الحكم..."
+              />
             </div>
 
             <div className="flex gap-2">
@@ -314,7 +386,7 @@ export default function CasesManagement() {
                   المحكمة
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider">
-                  الحالة
+                  تاريخ الجلسة
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider">
                   الإجراءات
@@ -345,17 +417,16 @@ export default function CasesManagement() {
                     {caseItem.court_name}
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <span
-                      className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                        caseItem.status === 'Open'
-                          ? 'bg-green-100 text-green-800'
-                          : caseItem.status === 'Closed'
-                          ? 'bg-slate-100 text-slate-800'
-                          : 'bg-amber-100 text-amber-800'
-                      }`}
-                    >
-                      {getStatusLabel(caseItem.status)}
-                    </span>
+                    {caseItem.session_date ? (
+                      <div className="flex items-center gap-2 justify-end">
+                        <span className="text-sm text-slate-700">
+                          {new Date(caseItem.session_date).toLocaleDateString('ar-SA')}
+                        </span>
+                        <Calendar className="w-4 h-4 text-slate-600" />
+                      </div>
+                    ) : (
+                      <span className="text-sm text-slate-400">-</span>
+                    )}
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2 justify-end">

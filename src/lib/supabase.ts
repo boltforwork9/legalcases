@@ -22,7 +22,7 @@ export interface Profile {
 export interface Person {
   id: string;
   full_name: string;
-  national_id: string;
+  national_id: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -33,7 +33,8 @@ export interface Case {
   case_type: string;
   court_name: string;
   case_number: string;
-  status: string;
+  session_date: string | null;
+  decision: string;
   created_at: string;
   updated_at: string;
 }

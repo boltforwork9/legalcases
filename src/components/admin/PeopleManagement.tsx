@@ -46,7 +46,7 @@ export default function PeopleManagement() {
           .from('people')
           .update({
             full_name: formData.full_name,
-            national_id: formData.national_id,
+            national_id: formData.national_id || null,
           })
           .eq('id', editingId);
 
@@ -57,7 +57,7 @@ export default function PeopleManagement() {
           .from('people')
           .insert({
             full_name: formData.full_name,
-            national_id: formData.national_id,
+            national_id: formData.national_id || null,
           });
 
         if (error) throw error;
@@ -76,7 +76,7 @@ export default function PeopleManagement() {
   const handleEdit = (person: Person) => {
     setFormData({
       full_name: person.full_name,
-      national_id: person.national_id,
+      national_id: person.national_id || '',
     });
     setEditingId(person.id);
     setShowForm(true);
@@ -162,14 +162,14 @@ export default function PeopleManagement() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  الرقم الوطني
+                  الرقم الوطني (اختياري)
                 </label>
                 <input
                   type="text"
                   value={formData.national_id}
                   onChange={(e) => setFormData({ ...formData, national_id: e.target.value })}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
-                  required
+                  placeholder="اختياري"
                 />
               </div>
             </div>
@@ -223,7 +223,7 @@ export default function PeopleManagement() {
                     </div>
                   </td>
                   <td className="px-6 py-4 text-slate-700 text-right">
-                    {person.national_id}
+                    {person.national_id || '-'}
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-600 text-right">
                     {new Date(person.created_at).toLocaleDateString('ar-SA')}

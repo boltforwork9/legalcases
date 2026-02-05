@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowRight, User, FileText, Building2, Hash, Activity } from 'lucide-react';
+import { ArrowRight, User, FileText, Building2, Hash, Calendar, FileCheck } from 'lucide-react';
 import { supabase, PersonWithCases } from '../lib/supabase';
 
 interface PersonDetailsProps {
@@ -52,14 +52,6 @@ export default function PersonDetails({ personId, onBack }: PersonDetailsProps) 
     }
   };
 
-  const getStatusLabel = (status: string) => {
-    const statusMap: Record<string, string> = {
-      'Open': 'مفتوحة',
-      'Pending': 'قيد الانتظار',
-      'Closed': 'مغلقة'
-    };
-    return statusMap[status] || status;
-  };
 
   if (loading) {
     return (
@@ -108,10 +100,12 @@ export default function PersonDetails({ personId, onBack }: PersonDetailsProps) 
           <div className="flex items-start gap-6">
             <div className="flex-1">
               <h2 className="text-2xl font-bold text-slate-900 mb-2">{person.full_name}</h2>
-              <div className="flex items-center gap-2 text-slate-600">
-                <span>الرقم الوطني: {person.national_id}</span>
-                <Hash className="w-4 h-4" />
-              </div>
+              {person.national_id && (
+                <div className="flex items-center gap-2 text-slate-600">
+                  <span>الرقم الوطني: {person.national_id}</span>
+                  <Hash className="w-4 h-4" />
+                </div>
+              )}
               <div className="mt-4 flex items-center gap-2 text-slate-600">
                 <span>إجمالي القضايا: {person.cases.length}</span>
                 <FileText className="w-4 h-4" />
@@ -138,19 +132,14 @@ export default function PersonDetails({ personId, onBack }: PersonDetailsProps) 
               {person.cases.map((caseItem) => (
                 <div key={caseItem.id} className="p-6 hover:bg-slate-50 transition">
                   <div className="flex items-start justify-between mb-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        caseItem.status.toLowerCase() === 'open'
-                          ? 'bg-green-100 text-green-800'
-                          : caseItem.status.toLowerCase() === 'closed'
-                          ? 'bg-slate-100 text-slate-800'
-                          : caseItem.status.toLowerCase() === 'pending'
-                          ? 'bg-amber-100 text-amber-800'
-                          : 'bg-slate-100 text-slate-800'
-                      }`}
-                    >
-                      {getStatusLabel(caseItem.status)}
-                    </span>
+                    <div className="text-left">
+                      {caseItem.session_date && (
+                        <div className="flex items-center gap-2 text-sm text-slate-600 mb-2">
+                          <Calendar className="w-4 h-4" />
+                          <span>{new Date(caseItem.session_date).toLocaleDateString('ar-SA')}</span>
+                        </div>
+                      )}
+                    </div>
                     <div className="text-right">
                       <h4 className="font-semibold text-slate-900 text-lg mb-1">
                         {caseItem.case_type}
@@ -162,18 +151,21 @@ export default function PersonDetails({ personId, onBack }: PersonDetailsProps) 
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="flex items-center gap-2 text-sm text-slate-600 justify-end">
-                      <span>
-                        تاريخ الإنشاء: {new Date(caseItem.created_at).toLocaleDateString('ar-SA')}
-                      </span>
-                      <Activity className="w-4 h-4" />
-                    </div>
+                  <div className="mb-3">
                     <div className="flex items-center gap-2 text-sm text-slate-600 justify-end">
                       <span>{caseItem.court_name}</span>
                       <Building2 className="w-4 h-4" />
                     </div>
                   </div>
+
+                  {caseItem.decision && (
+                    <div className="mt-3 p-3 bg-slate-50 rounded-lg">
+                      <div className="flex items-start gap-2 justify-end">
+                        <div className="text-sm text-slate-700 text-right">{caseItem.decision}</div>
+                        <FileCheck className="w-4 h-4 text-slate-600 flex-shrink-0 mt-0.5" />
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
