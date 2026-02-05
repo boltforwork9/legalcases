@@ -2,6 +2,18 @@
 
 A secure internal legal case search system for lawyers with role-based access control, powered by Supabase.
 
+---
+
+## 🔄 Migrating to a New Supabase Project?
+
+If you need to migrate this application to a new Supabase project:
+
+- **Quick Start:** See [QUICK_MIGRATION_REFERENCE.md](./QUICK_MIGRATION_REFERENCE.md)
+- **Detailed Guide:** See [MIGRATION_GUIDE.md](./MIGRATION_GUIDE.md)
+- **Admin Setup:** See [ADMIN_SETUP_NOTES.md](./ADMIN_SETUP_NOTES.md)
+
+---
+
 ## Features
 
 ### Authentication & Authorization
